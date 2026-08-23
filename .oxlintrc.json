@@ -1,0 +1,16 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "rules": {
+    "no-unused-vars": "warn"
+  },
+  "categories": {
+    "correctness": "error"
+  },
+  "plugins": ["react", "jsx-a11y", "import"],
+  "settings": {
+    "jsx-a11y": {
+      "plugins": ["jsx-a11y"]
+    }
+  },
+  "ignorePatterns": ["dist", "node_modules", "contracts", "target"]
+}

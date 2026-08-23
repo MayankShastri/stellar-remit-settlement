@@ -1,0 +1,20 @@
+node_modules/
+dist/
+
+# Rust / Soroban build artifacts
+target/
+contracts/*/target/
+contracts/*/test_snapshots/
+
+# Environment — real contract IDs live in .env.local (see .env.example)
+.env
+.env.local
+.env.*.local
+
+# Stellar CLI local state (keys, aliases)
+.stellar/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.local
