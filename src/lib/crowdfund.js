@@ -1,4 +1,5 @@
 import * as StellarSdk from '@stellar/stellar-sdk'
+import * as SorobanRpc from '@stellar/stellar-sdk/rpc'
 import { CROWDFUND_ID, NETWORK_PASSPHRASE, xlmToStroops } from './config'
 import { server, simulateRead, describeSimulationError } from './rpc'
 
