@@ -167,7 +167,9 @@ export function usePool() {
       setTxError(null)
       try {
         const prepared = await simulateOrThrow(buildTx())
-        const { signedXdr } = await signTransaction(prepared.toXDR(), address)
+        const signed = await signTransaction(prepared.toXDR(), address)
+        // Kit modules return { signedTxXdr } (older builds: { signedXdr }).
+        const signedXdr = signed?.signedTxXdr ?? signed?.signedXdr
         const sendResult = await submitSignedTx(signedXdr)
         setTxHash(sendResult.hash)
         const result = await pollTxResult(sendResult.hash)
