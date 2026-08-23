@@ -39,8 +39,8 @@ export function PoolHero({ progressPercent, total, goal, loading, withdrawn }) {
             </span>
           </div>
           <progress
-            value={Number(loading ? 0 : progress.total)}
-            max={Number(progress.goal) || 1}
+            value={Number(loading ? 0 : total)}
+            max={Number(goal) || 1}
             aria-label="Funding progress toward the pool goal"
             className="h-2 w-full appearance-none overflow-hidden rounded-full border border-zinc-800 bg-zinc-950 [&::-moz-progress-bar]:rounded-full [&::-moz-progress-bar]:bg-white [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-bar]:bg-zinc-950 [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:bg-white"
           />

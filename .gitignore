@@ -21,3 +21,6 @@ Thumbs.db
 
 # Local design drafts — not part of the shipped project
 HTML REFERENCES/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+graft/
