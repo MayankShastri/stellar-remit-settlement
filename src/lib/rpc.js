@@ -96,14 +96,21 @@ const TX_RESULT_HINTS = {
 
 /** Decode a TransactionResult XDR into a human-readable rejection reason. */
 export function describeTransactionResult(resultXdr) {
+  if (!resultXdr) {
+    return 'The network rejected the transaction without returning a result.'
+  }
   try {
-    const tr = StellarSdk.xdr.TransactionResult.fromXDR(resultXdr, 'base64')
+    const tr =
+      typeof resultXdr === 'string'
+        ? StellarSdk.xdr.TransactionResult.fromXDR(resultXdr, 'base64')
+        : StellarSdk.xdr.TransactionResult.fromXDR(resultXdr)
     const name = tr.result().switch().name
     if (name === 'txFailed') {
       return 'Transaction failed on-chain — check the contract state and retry.'
     }
     return TX_RESULT_HINTS[name] || `Network rejected the transaction (${name}).`
   } catch {
-    return 'The network rejected the transaction before it reached a ledger.'
+    // Surface the raw payload — an undecodable result is itself the clue.
+    return `Network rejected the transaction. Raw result: ${String(resultXdr).slice(0, 140)}`
   }
 }
