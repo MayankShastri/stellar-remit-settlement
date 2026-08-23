@@ -6,7 +6,7 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' https://soroban-testnet.stellar.org https://horizon-testnet.stellar.org https://stellar.expert https://api.stellar.expert https://albedo.link https://freighter-api.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: https://*.lobstr.co; connect-src 'self' https://soroban-testnet.stellar.org https://horizon-testnet.stellar.org https://stellar.expert https://api.stellar.expert https://albedo.link https://freighter-api.com https://api.lobstr.co https://lobstr.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
         },
         {
           "key": "X-Content-Type-Options",
