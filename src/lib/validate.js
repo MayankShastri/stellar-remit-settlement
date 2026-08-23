@@ -1,8 +1,18 @@
+import * as StellarSdk from '@stellar/stellar-sdk'
+
 const G_KEY_RE = /^G[A-Z2-7]{55}$/
 
-/** Valid Stellar account address (G…, 56 chars, base32 alphabet). */
+/**
+ * Valid Stellar account address: 56 chars, base32 alphabet, AND a valid
+ * StrKey checksum (catches transposed characters, not just format typos).
+ */
 export function isValidAddress(address) {
-  return typeof address === 'string' && G_KEY_RE.test(address)
+  if (typeof address !== 'string' || !G_KEY_RE.test(address)) return false
+  try {
+    return StellarSdk.StrKey.isValidEd25519PublicKey(address)
+  } catch {
+    return false
+  }
 }
 
 /**

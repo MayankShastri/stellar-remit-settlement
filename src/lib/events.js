@@ -15,6 +15,7 @@ export function createEventPoller({ onBatch, activeDelayMs = 300, idleDelayMs = 
   let cursor = null
   let stopped = true
   let timer = null
+  let consecutiveFailures = 0
 
   async function fetchLatestLedger() {
     if (cursor !== null) return
@@ -37,11 +38,20 @@ export function createEventPoller({ onBatch, activeDelayMs = 300, idleDelayMs = 
         limit: 100,
       })
       cursor = response.latestLedger
+      consecutiveFailures = 0
       const events = normalize(response.events)
       onBatch(events)
       timer = setTimeout(tick, events.length > 0 ? activeDelayMs : idleDelayMs)
     } catch {
-      // transient RPC failure — back off harder and keep going
+      // Transient RPC failure — back off. If failures persist, the stored
+      // cursor has likely fallen outside the RPC's event retention window;
+      // drop it so the next tick re-syncs to the latest ledger (resuming the
+      // stream beats staying dead, at the cost of skipping the missed window).
+      consecutiveFailures += 1
+      if (consecutiveFailures >= 3) {
+        cursor = null
+        consecutiveFailures = 0
+      }
       timer = setTimeout(tick, idleDelayMs * 2)
     }
   }
