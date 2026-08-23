@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+jobs:
+  frontend:
+    name: Frontend — lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Lint (oxlint)
+        run: npm run lint
+
+      - name: Unit tests (Vitest)
+        run: npm test
+
+      # Deliberate pre-merge verification gate, separate from Vercel's own
+      # deployment build: this catches build-breaking errors (bad imports,
+      # missing env vars) before code lands on master, independent of
+      # whether Vercel's deploy later succeeds. Actions verifies; Vercel ships.
+      - name: Build
+        run: npm run build
+
+  contracts:
+    name: Contracts — cargo test + wasm build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32v1-none
+
+      - name: Cache cargo registry
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Run contract tests
+        run: cargo test --workspace
+
+      - name: Install Stellar CLI
+        run: cargo install --locked stellar-cli
+
+      - name: Build WASM artifacts
+        run: |
+          stellar contract build --manifest-path contracts/crowdfund/Cargo.toml
+          stellar contract build --manifest-path contracts/splitter/Cargo.toml
