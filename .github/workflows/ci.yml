@@ -56,10 +56,10 @@ jobs:
       - name: Run contract tests
         run: cargo test --workspace
 
-      # stellar-cli links libdbus (keyring support), which needs the system
-      # library + pkg-config on ubuntu runners.
+      # stellar-cli links native libs on linux: libdbus (keyring) + libudev
+      # (hidapi/Ledger support). Install both up front.
       - name: Install native dependencies for stellar-cli
-        run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev
+        run: sudo apt-get update && sudo apt-get install -y pkg-config libdbus-1-dev libudev-dev
 
       - name: Install Stellar CLI
         run: cargo install --locked stellar-cli
