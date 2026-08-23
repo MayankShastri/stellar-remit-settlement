@@ -22,7 +22,7 @@ import {
 } from '../lib/crowdfund'
 import { getRecipients } from '../lib/splitter'
 import { createEventPoller } from '../lib/events'
-import { withRetry } from '../lib/rpc'
+import { withRetry, describeTransactionResult } from '../lib/rpc'
 import { HORIZON_URL, isConfigured } from '../lib/config'
 import { validateAmount } from '../lib/validate'
 
@@ -172,6 +172,9 @@ export function usePool() {
         const signedXdr = signed?.signedTxXdr ?? signed?.signedXdr
         const sendResult = await submitSignedTx(signedXdr)
         setTxHash(sendResult.hash)
+        if (sendResult.status === 'ERROR') {
+          throw new Error(describeTransactionResult(sendResult.errorResultXdr))
+        }
         const result = await pollTxResult(sendResult.hash)
         if (result?.status === 'SUCCESS') {
           setTxStatus('success')
@@ -179,7 +182,10 @@ export function usePool() {
           await refreshBalance(address)
           return sendResult.hash
         }
-        throw new Error('Transaction failed on-chain')
+        if (result?.status === 'FAILED') {
+          throw new Error(describeTransactionResult(result.resultXdr))
+        }
+        throw new Error('Confirmation timed out — check the hash on the explorer.')
       } finally {
         setIsBusy(action, false)
       }

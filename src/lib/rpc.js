@@ -85,3 +85,25 @@ export function describeSimulationError(result) {
   }
   return 'Simulation failed before signing — nothing left your wallet.'
 }
+
+const TX_RESULT_HINTS = {
+  txBadSeq: 'Stale transaction sequence — simply retry.',
+  txInsufficientBalance: 'Insufficient balance for this amount plus fees.',
+  txNoAccount: 'Source account not found on testnet.',
+  txMalformed: 'Transaction was malformed — please report this.',
+  txInsufficientFee: 'Fee too low for current network conditions — retry.',
+}
+
+/** Decode a TransactionResult XDR into a human-readable rejection reason. */
+export function describeTransactionResult(resultXdr) {
+  try {
+    const tr = StellarSdk.xdr.TransactionResult.fromXDR(resultXdr, 'base64')
+    const name = tr.result().switch().name
+    if (name === 'txFailed') {
+      return 'Transaction failed on-chain — check the contract state and retry.'
+    }
+    return TX_RESULT_HINTS[name] || `Network rejected the transaction (${name}).`
+  } catch {
+    return 'The network rejected the transaction before it reached a ledger.'
+  }
+}
