@@ -40,9 +40,12 @@ export async function getSplitterAddress() {
 }
 
 /** Build an unsigned donate transaction (donor signs it in their wallet). */
-export function buildDonateTx(donor, amountXlm) {
+export async function buildDonateTx(donor, amountXlm) {
   const amount = xlmToStroops(amountXlm)
-  const account = new StellarSdk.Account(donor, '0')
+  // Real account = real sequence number. prepareTransaction does NOT fetch
+  // it — a dummy '0' sequence gets submitted as-is and instantly rejected
+  // with txBadSeq.
+  const account = await server.getAccount(donor)
   const contract = new StellarSdk.Contract(CROWDFUND_ID)
   return new StellarSdk.TransactionBuilder(account, {
     fee: '100000',
@@ -60,8 +63,8 @@ export function buildDonateTx(donor, amountXlm) {
 }
 
 /** Build an unsigned withdraw transaction for the pool admin. */
-export function buildWithdrawTx(admin) {
-  const account = new StellarSdk.Account(admin, '0')
+export async function buildWithdrawTx(admin) {
+  const account = await server.getAccount(admin)
   const contract = new StellarSdk.Contract(CROWDFUND_ID)
   return new StellarSdk.TransactionBuilder(account, {
     fee: '300000', // cross-contract settlement burns more resources

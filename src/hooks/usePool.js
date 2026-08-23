@@ -167,7 +167,8 @@ export function usePool() {
       setTxHash(null)
       setTxError(null)
       try {
-        const prepared = await simulateOrThrow(buildTx())
+        const builtTx = await buildTx()
+        const prepared = await simulateOrThrow(builtTx)
         let signed
         try {
           signed = await signTransaction(prepared.toXDR(), address)
