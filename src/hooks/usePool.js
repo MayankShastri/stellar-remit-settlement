@@ -186,6 +186,7 @@ export function usePool() {
         const sendResult = await submitSignedTx(signedXdr)
         setTxHash(sendResult.hash)
         if (sendResult.status === 'ERROR') {
+          console.error('[submit] full RPC response:', sendResult)
           throw new Error(describeTransactionResult(sendResult.errorResultXdr))
         }
         const result = await pollTxResult(sendResult.hash)
