@@ -17,10 +17,14 @@ export function createEventPoller({ onBatch, activeDelayMs = 300, idleDelayMs = 
   let timer = null
   let consecutiveFailures = 0
 
+  // ~24h of ledgers at ~5s each — backfills recent history on page load
+  // without overshooting Soroban RPC's event retention window.
+  const BACKFILL_LEDGERS = 17_000
+
   async function fetchLatestLedger() {
     if (cursor !== null) return
     const latest = await server.getLatestLedger()
-    cursor = latest.sequence
+    cursor = Math.max(0, latest.sequence - BACKFILL_LEDGERS)
   }
 
   async function tick() {
