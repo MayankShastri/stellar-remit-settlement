@@ -56,8 +56,8 @@ intact.
 
 | Contract | Address |
 |---|---|
-| Crowdfund (`CCRLGUI…FDED4I`) | `CCRLGUI3LPAEBNW6PRUBXZY4GXCPGVUS65JNMJDRWVD56V6SNDFDED4I` |
-| Splitter (`CACTEF2…D7YZHS`) | `CACTEF2UQRO7COJ2LMHVYIYEEMRNPT3ZSHGKZTQWVYNSCNTTHQD7YZHS` |
+| Crowdfund (`CB4YU4L…OWANNV`) | `CB4YU4LBPKF7PSNHCSZP3VQO2RXHOZALBC6ZC53CMZMYCHZKDBOWANNV` |
+| Splitter (`CAXIIC2…EDKH2`) | `CAXIICPFSK6JCJC6FICXYV3QGQISOPPRS773EVB54QKTFWUGWFPEDKH2` |
 | Native XLM (SAC) | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
 
 The Splitter's address is **locked into Crowdfund state at `initialize()`**
@@ -69,14 +69,14 @@ contributing.
 
 | Step | Tx hash |
 |---|---|
-| Crowdfund `initialize()` (goal 100 XLM) | [`63fd1e02…e5446`](https://stellar.expert/explorer/testnet/tx/63fd1e02398a3e41952ee3ba04b063b210d9acb1e47da010af1046f38b7e5446) |
-| Donation #1 — admin, 60 XLM | see account history |
-| Donation #2 — donor2, 40 XLM → goal reached | see account history |
-| **`withdraw()` — cross-contract settlement** | [`78e10459…0338`](https://stellar.expert/explorer/testnet/tx/78e104594791e747f53ec348802b54ec25a3e90b2bc4564e4b5c30bea1860338) |
+| Crowdfund `initialize()` (goal 100 XLM, fresh pool) | [`4454caf2…f1035`](https://stellar.expert/explorer/testnet/tx/4454caf2c2d0838ee90f1ab13b0ba5ed011335c980cf79e1055de043037f1035) |
+| Donations → goal reached | recorded in the demo video |
+| **`withdraw()` — cross-contract settlement** | recorded in the demo video |
 
 The withdrawal transaction contains the full trace: Crowdfund approves the
 Splitter for the pool balance, invokes `distribute()` cross-contract, and two
-`PAYDIST` events land — beneficiary +70 XLM, provider +30 XLM, zero dust.
+`PAYDIST` events land — 70% to the primary beneficiary, 30% to the service
+provider, zero dust.
 
 ## Deployment workflow (reproduce it)
 
