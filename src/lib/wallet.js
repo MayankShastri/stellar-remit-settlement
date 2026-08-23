@@ -53,15 +53,21 @@ export async function disconnectWallet() {
 /** Map a raw wallet/RPC error into a user-facing message. */
 export function describeError(err) {
   const msg = String(err?.message || err || '')
-  if (
-    /reject|denied|cancel|declined/i.test(msg) ||
-    err?.code === -1 ||
-    err?.code === -3
-  ) {
+  if (err?.code === -1 || err?.code === -3) {
     return { kind: 'rejected', message: 'Transaction rejected — nothing was signed.' }
   }
   if (/no wallet|not installed|wallet not found|freighter.*not/i.test(msg)) {
     return { kind: 'wallet', message: 'No wallet detected — install a Stellar wallet to continue.' }
   }
   return { kind: 'generic', message: msg || 'Something went wrong.' }
+}
+
+/** True when an error came from the user declining/cancelling in their wallet. */
+export function isWalletRejection(err) {
+  const msg = String(err?.message || err || '')
+  return (
+    err?.code === -1 ||
+    err?.code === -3 ||
+    /reject|denied|cancel|declined/i.test(msg)
+  )
 }

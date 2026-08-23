@@ -8,6 +8,7 @@ import {
   disconnectWallet,
   signTransaction,
   describeError,
+  isWalletRejection,
 } from '../lib/wallet'
 import {
   getProgress,
@@ -167,7 +168,19 @@ export function usePool() {
       setTxError(null)
       try {
         const prepared = await simulateOrThrow(buildTx())
-        const signed = await signTransaction(prepared.toXDR(), address)
+        let signed
+        try {
+          signed = await signTransaction(prepared.toXDR(), address)
+        } catch (err) {
+          // Signing is the only step where "rejected" means the user
+          // declined — network errors later carry their own real reason.
+          if (isWalletRejection(err)) {
+            throw Object.assign(new Error('Transaction rejected — nothing was signed.'), {
+              kind: 'rejected',
+            })
+          }
+          throw err
+        }
         // Kit modules return { signedTxXdr } (older builds: { signedXdr }).
         const signedXdr = signed?.signedTxXdr ?? signed?.signedXdr
         const sendResult = await submitSignedTx(signedXdr)
@@ -213,7 +226,9 @@ export function usePool() {
         return hash
       } catch (err) {
         setTxStatus('error')
-        const described = describeError(err)
+        const described = err?.kind
+          ? { kind: err.kind, message: err.message }
+          : describeError(err)
         setTxError(described.message)
         showToast(described.kind === 'rejected' ? 'info' : 'error', described.message)
       } finally {
@@ -242,7 +257,9 @@ export function usePool() {
       return hash
     } catch (err) {
       setTxStatus('error')
-      const described = describeError(err)
+      const described = err?.kind
+        ? { kind: err.kind, message: err.message }
+        : describeError(err)
       setTxError(described.message)
       showToast('error', described.message)
     } finally {
