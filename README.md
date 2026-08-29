@@ -9,9 +9,9 @@ transaction**: 70% to the primary beneficiary, 30% to a service provider,
 enforced by two Soroban contracts rather than a promise from whoever holds
 the funds.
 
-> Live demo: _[add Vercel URL after first deploy]_
->
-> Demo video: _[add 1–2 min walkthrough link]_
+> Live demo: https://stellar-remit-settlement.vercel.app/
+
+> Demo video: [Walkthrough](https://youtu.be/u0aMwEfrpek)
 
 ---
 
@@ -56,8 +56,8 @@ intact.
 
 | Contract | Address |
 |---|---|
-| Crowdfund (`CB4YU4L…OWANNV`) | `CB4YU4LBPKF7PSNHCSZP3VQO2RXHOZALBC6ZC53CMZMYCHZKDBOWANNV` |
-| Splitter (`CAXIIC2…EDKH2`) | `CAXIICPFSK6JCJC6FICXYV3QGQISOPPRS773EVB54QKTFWUGWFPEDKH2` |
+| Crowdfund (`CB5CF5…6UBS`) | `CB5CF5BT3ESNV66G355YONADPYOIT666R7MFUIITGGPLPD5SEZBR6UBS` |
+| Splitter (`CCYDQ…EU2PD`) | `CCYDQILCNR4DASP5L2DDN475NTWBXJZLBX466DTMFUVL3MEBI73EU2PD` |
 | Native XLM (SAC) | `CDLZFC3SYJYDZT7K67VZ75HPJVIEUVNIXF47ZG2FB2RMQQVU2HHGCYSC` |
 
 The Splitter's address is **locked into Crowdfund state at `initialize()`**
@@ -69,14 +69,13 @@ contributing.
 
 | Step | Tx hash |
 |---|---|
-| Crowdfund `initialize()` (goal 100 XLM, fresh pool) | [`4454caf2…f1035`](https://stellar.expert/explorer/testnet/tx/4454caf2c2d0838ee90f1ab13b0ba5ed011335c980cf79e1055de043037f1035) |
-| Donations → goal reached | recorded in the demo video |
-| **`withdraw()` — cross-contract settlement** | recorded in the demo video |
+| Crowdfund `initialize()` (goal 100 XLM, empty pool) | recorded in demo video |
+| Donations → goal reached | recorded in demo video |
+| **`withdraw()` — cross-contract settlement (70/30 split)** | recorded in demo video |
 
-The withdrawal transaction contains the full trace: Crowdfund approves the
-Splitter for the pool balance, invokes `distribute()` cross-contract, and two
-`PAYDIST` events land — 70% to the primary beneficiary, 30% to the service
-provider, zero dust.
+Previous deployment v2 hashes preserved for reference:
+- Donations: [`e1702c0a…`](https://stellar.expert/explorer/testnet/tx/e1702c0a42708371cc7d69d7fbc2f5d084e0d3e5189c0d587f5267aaa69a2f65) / [`3209aba2…`](https://stellar.expert/explorer/testnet/tx/3209aba29dc1cc51de472f8ebe1fa11431541a275a23a8fdf92c620f4ebeff88)
+- Settlement: [`5172fdd6…`](https://stellar.expert/explorer/testnet/tx/5172fdd679355c2bdd262c8498cfc9f1b3ec67924241e8b89275fcbccc3087c7)
 
 ## Deployment workflow (reproduce it)
 
@@ -206,18 +205,21 @@ separate from Vercel's deployment build. **Actions verifies; Vercel ships.**
 └── vercel.json                # security headers
 ```
 
-## Submission checklist
+## Screenshots
 
-- [x] Public GitHub repository
-- [x] README with complete documentation
-- [x] 10+ meaningful commits
-- [ ] Live demo link (Vercel) — pending first deploy
-- [x] Contract deployment addresses (above)
-- [x] Transaction hash for cross-contract interaction (above)
-- [ ] Screenshot: mobile responsive UI
-- [ ] Screenshot: CI/CD pipeline running
-- [ ] Screenshot: test output (19 contract + 15 frontend passing)
-- [ ] Demo video link (1–2 min)
+### Mobile Responsive UI
+![Mobile Responsive UI](docs/screenshots/Mobile%20Screenshot%201.png)
+
+### Mobile Responsive UI (Donate Form)
+![Mobile Responsive UI](docs/screenshots/Mobile%20Screenshot%202.png)
+
+### CI/CD Pipeline
+![CI/CD Pipeline](docs/screenshots/CI-CD%20Pipeline%20Running.png)
+
+### Test Output
+![Test Output](docs/screenshots/Cargo%20Test%20--workspace.png)
+
+---
 
 ## License
 
