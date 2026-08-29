@@ -219,6 +219,9 @@ separate from Vercel's deployment build. **Actions verifies; Vercel ships.**
 ### Test Output
 ![Test Output](docs/screenshots/Cargo%20Test%20--workspace.png)
 
+### Test Output
+![Test Output](docs/screenshots/NPM%20Test.png)
+
 ---
 
 ## License
